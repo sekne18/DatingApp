@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
@@ -37,6 +38,22 @@ namespace API.Controllers
         public async Task<ActionResult<MemberDto>> GetUser(string username) //IEnumerable is the same as list - list has more functions
         {
             return await _userRepository.GetMemberAsync(username); 
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;  // It gets us the username token that the API uses to auth. the users -> This is the user we will be updating 
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+
+            _mapper.Map(memberUpdateDto, user); // Automatically update properties in user;  example --> (user.City = memberUpdateDto.City) 
+
+            _userRepository.Update(user); //This guarantees to not cause exceptions, even if we update any propertiees or not
+
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to update user");
         }
 
 
