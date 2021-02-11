@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using API.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities
 {
-    public class AppUser
+    public class AppUser : IdentityUser<int>
     {
-        public int Id { get; set; }      //naming is important for entity
-        public string UserName { get; set; }    //naming is important for entity
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string KnownAs { get; set; }
         public DateTime Created { get; set; } = DateTime.Now;
@@ -21,11 +17,10 @@ namespace API.Entities
         public string City { get; set; }
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }
-        
         public ICollection<UserLike> LikedByUsers { get; set; }
         public ICollection<UserLike> LikeUsers { get; set; }
         public ICollection<Message> MessageSent { get; set; }
         public ICollection<Message> MessagesReceived { get; set; }
-
+        public ICollection<AppUserRole> UserRoles { get; set; }
     }
 }
